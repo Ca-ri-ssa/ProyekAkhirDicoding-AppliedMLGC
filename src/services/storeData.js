@@ -1,7 +1,9 @@
 const { Firestore } = require('@google-cloud/firestore');
 
 //initialize firestore db
-const db = new Firestore();
+const db = new Firestore({
+    projectId: process.env.PROJECT_ID,
+});
 
 //store data prediction
 async function storeData(id, data) {
