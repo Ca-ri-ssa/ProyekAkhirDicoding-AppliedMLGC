@@ -29,7 +29,10 @@ async function postPredictHandler(request, h) {
     response.code(201);
     return response;
   } catch(err) {
-    throw new InputError('Terjadi kesalahan dalam melakukan prediksi');
+    return h.response({
+      status: "fail",
+      message: "Terjadi kesalahan dalam melakukan prediksi",
+    }).code(400);
   }
 }
 

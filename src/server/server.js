@@ -24,27 +24,24 @@ const InputError = require('../exceptions/InputError');
     server.ext('onPreResponse', (request, h) => {
         const response = request.response;
 
-        if (response.isBoom) {
-            const statusCode = response.output.statusCode;
-            let message = response.message;
-
-            if (statusCode === 413) {
-                message = 'Payload content length greater than maximum allowed: 1000000';
-            }
-
-            if (statusCode === 400 && response instanceof InputError) {
-                message = 'Terjadi kesalahan dalam melakukan prediksi';
-            }
-
+        if (response.isBoom && response.output.statusCode === 413) {
             const newResponse = h.response({
-                status: 'fail',
-                message,
+              status: "fail",
+              message: "Payload content length greater than maximum allowed: 1000000",
             });
-
-            newResponse.code(statusCode);
+            newResponse.code(413);
             return newResponse;
         }
-
+    
+        if (response instanceof InputError || (response.isBoom && response.output.statusCode === 400)) {
+        const newResponse = h.response({
+            status: "fail",
+            message: "Terjadi kesalahan dalam melakukan prediksi",
+        });
+        newResponse.code(400);
+        return newResponse;
+        }
+    
         return h.continue;
     });
 
